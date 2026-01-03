@@ -18,54 +18,63 @@
 
 ### Prerequisites
 
-- [Claude Code](https://github.com/anthropics/claude-code) installed
-- Python 3.8+
+- [Claude Code](https://github.com/anthropics/claude-code) installed (optional)
 - Node.js 18+
 
 ### Installation
 
-#### Option 1: One-line Install (Recommended)
+**No installation required!** Just run with npx:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/YOUR_USERNAME/claude-code-visualizer/main/install.sh | bash
+# Navigate to any Claude Code project
+cd ~/my-claude-project
+
+# Run visualizer
+npx viewcc
 ```
 
-#### Option 2: Manual Install
+That's it! The visualizer will:
+- ✅ Scan your project
+- ✅ Start the server
+- ✅ Open your browser automatically
+
+### Usage
+
+**Basic usage:**
+```bash
+npx viewcc
+```
+
+**Advanced options:**
+```bash
+npx viewcc --no-open       # Don't open browser
+npx viewcc --no-scan       # Use existing data
+npx viewcc --port 8080     # Custom port
+npx viewcc --verbose       # Show detailed logs
+```
+
+### Local Development
+
+If you want to modify or contribute:
 
 ```bash
 # Clone the repository
 git clone https://github.com/YOUR_USERNAME/claude-code-visualizer
+cd claude-code-visualizer
 
-# Copy files to your Claude Code project
-cp -r claude-code-visualizer/.claude/skills/agent-skill-visualizer .claude/skills/
-cp claude-code-visualizer/.claude/agents/visualizer-launcher.md .claude/agents/
-
-# Install webapp dependencies
-cd .claude/skills/agent-skill-visualizer/webapp
+# Install dependencies
 npm install
+
+# Build the project
 npm run build
+
+# Link locally
+npm link
+
+# Test in any Claude Code project
+cd ~/other-project
+viewcc
 ```
-
-### Usage
-
-1. **Scan your project** to generate the graph data:
-   ```bash
-   python .claude/skills/agent-skill-visualizer/scripts/scan_agents_skills.py
-   ```
-
-2. **Start the visualizer**:
-   - Use Claude Code and invoke the `visualizer-launcher` agent
-   - Or manually:
-     ```bash
-     # Terminal 1: Start SSE server
-     python .claude/skills/agent-skill-visualizer/scripts/stream_server.py
-
-     # Terminal 2: Start webapp
-     cd .claude/skills/agent-skill-visualizer/webapp
-     npm run dev
-     ```
-
-3. **Open in browser**: http://localhost:5173
 
 ## 📖 How It Works
 

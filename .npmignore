@@ -1,0 +1,44 @@
+# Source files (TypeScript)
+src/
+*.ts
+!*.d.ts
+
+# Development files
+.claude/
+webapp/src/
+webapp/node_modules/
+webapp/public/
+tsconfig.json
+.git/
+.gitignore
+
+# Documentation (keep only README)
+*.md
+!README.md
+
+# Build artifacts
+node_modules/
+.DS_Store
+*.log
+npm-debug.log*
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+__tests__/
+
+# Plans
+.claude/plans/
+
+# Scripts
+install.sh

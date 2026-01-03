@@ -8,7 +8,7 @@ interface UseGraphDataResult {
   reload: () => void;
 }
 
-export function useGraphData(dataUrl: string = './data/graph-data.json'): UseGraphDataResult {
+export function useGraphData(dataUrl: string = '/api/graph-data'): UseGraphDataResult {
   const [data, setData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

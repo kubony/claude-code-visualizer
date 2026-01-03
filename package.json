@@ -1,0 +1,59 @@
+{
+  "name": "viewcc",
+  "version": "1.0.0",
+  "description": "Interactive visualization for Claude Code projects - run with npx",
+  "main": "./lib/cli.js",
+  "bin": {
+    "viewcc": "./bin/claude-viz.js"
+  },
+  "type": "module",
+  "files": [
+    "bin/",
+    "lib/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && npm run build:webapp && npm run copy:dist",
+    "build:webapp": "cd .claude/skills/agent-skill-visualizer/webapp && npm run build",
+    "copy:dist": "mkdir -p dist && cp -r .claude/skills/agent-skill-visualizer/webapp/dist/* dist/",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && npm link"
+  },
+  "keywords": [
+    "claude-code",
+    "visualization",
+    "graph",
+    "agents",
+    "skills",
+    "cli",
+    "developer-tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "open": "^9.1.0",
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0",
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/claude-code-visualizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/claude-code-visualizer/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/claude-code-visualizer#readme"
+}
