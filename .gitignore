@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Webapp specific
+.claude/skills/agent-skill-visualizer/webapp/dist/
+.claude/skills/agent-skill-visualizer/webapp/.vite/
+.claude/skills/agent-skill-visualizer/webapp/node_modules/
+
+# Generated data
+.claude/skills/agent-skill-visualizer/webapp/public/data/graph-data.json
+.claude/stream.jsonl
+.claude/.activity_ids.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

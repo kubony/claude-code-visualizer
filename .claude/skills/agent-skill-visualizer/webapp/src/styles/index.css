@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-agent: #3B82F6;
+  --color-agent-light: #60A5FA;
+  --color-skill: #10B981;
+  --color-skill-light: #34D399;
+  --color-edge-uses: #6B7280;
+  --color-edge-depends: #F59E0B;
+}
+
+body {
+  @apply bg-gray-900 text-gray-100 antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Graph container */
+.graph-container {
+  @apply w-full h-full;
+}
+
+/* Node styles */
+.node {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.node:hover {
+  opacity: 0.8;
+}
+
+.node-label {
+  font-size: 12px;
+  font-weight: 500;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Edge styles */
+.edge {
+  stroke-opacity: 0.6;
+  transition: stroke-opacity 0.2s ease;
+}
+
+.edge:hover {
+  stroke-opacity: 1;
+}
+
+.edge-uses {
+  stroke: var(--color-edge-uses);
+}
+
+.edge-depends {
+  stroke: var(--color-edge-depends);
+  stroke-dasharray: 5, 3;
+}
+
+/* Tooltip */
+.tooltip {
+  @apply absolute z-50 px-3 py-2 text-sm bg-gray-800 text-gray-100 rounded-lg shadow-lg;
+  @apply pointer-events-none opacity-0 transition-opacity duration-200;
+  max-width: 300px;
+}
+
+.tooltip.visible {
+  @apply opacity-100;
+}
+
+/* Selected node highlight */
+.node-selected {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+}
+
+/* Dimmed state for non-connected nodes */
+.node-dimmed {
+  opacity: 0.2;
+}
+
+.edge-dimmed {
+  stroke-opacity: 0.1;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Active node animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(59, 130, 246, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-glow-green {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(16, 185, 129, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes edge-flow {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-pulse-glow-blue {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow-green {
+  animation: pulse-glow-green 1.5s ease-in-out infinite;
+}
+
+/* Active edge animation */
+.edge-active {
+  stroke: #3b82f6 !important;
+  stroke-width: 3 !important;
+  stroke-dasharray: 8 4;
+  animation: edge-flow 0.5s linear infinite;
+}
+
+/* Connection status dot */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}

@@ -1,0 +1,28 @@
+{
+  "name": "agent-skill-visualizer",
+  "version": "1.0.0",
+  "description": "D3.js visualization for Claude Code agents and skills",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "scan": "python ../scripts/scan_agents_skills.py ../../../.. --output public/data/graph-data.json"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "d3": "^7.8.5"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}
