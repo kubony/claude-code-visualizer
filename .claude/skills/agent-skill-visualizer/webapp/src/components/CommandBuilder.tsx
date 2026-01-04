@@ -7,7 +7,7 @@ interface CommandBuilderProps {
   selectedNode?: GraphNode | null;
 }
 
-const SSE_SERVER_URL = 'http://localhost:3001';
+const SSE_SERVER_URL = '';
 
 export function CommandBuilder({ nodes, selectedNode }: CommandBuilderProps) {
   const [instruction, setInstruction] = useState('');

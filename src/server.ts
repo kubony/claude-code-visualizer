@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Server } from 'http';
+import { exec } from 'child_process';
 
 export interface ServerOptions {
   port: number;
@@ -16,12 +17,65 @@ export interface ServerOptions {
 export async function startServer(options: ServerOptions): Promise<Server> {
   const app = express();
 
+  // Parse JSON request bodies
+  app.use(express.json());
+
   // CORS headers for development
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
+  });
+
+  // API: Execute Claude Code commands
+  app.post('/api/execute', (req: Request, res: Response) => {
+    const { instruction, skipPermissions } = req.body;
+
+    // Validate instruction
+    if (!instruction || typeof instruction !== 'string' || !instruction.trim()) {
+      return res.status(400).json({ error: 'instruction is required and must be a non-empty string' });
+    }
+
+    // Build Claude Code command
+    const flag = skipPermissions ? '--dangerously-skip-permissions ' : '';
+    const escapedInstruction = instruction.replace(/'/g, "'\\''");
+    const claudeCmd = `claude ${flag}'${escapedInstruction}'`;
+
+    // Platform-specific terminal command
+    let terminalCmd: string;
+    const platform = process.platform;
+
+    if (platform === 'darwin') {
+      // macOS - AppleScript
+      const projectPath = options.projectRoot.replace(/'/g, "'\\''");
+      const escapedClaudeCmd = claudeCmd.replace(/'/g, "'\\''");
+      const applescript = `tell application "Terminal"\nactivate\ndo script "cd '${projectPath}' && ${escapedClaudeCmd}"\nend tell`;
+      terminalCmd = `osascript -e '${applescript.replace(/'/g, "'\\''")}'`;
+    } else if (platform === 'win32') {
+      // Windows
+      terminalCmd = `start cmd /K "cd /d "${options.projectRoot}" && ${claudeCmd}"`;
+    } else {
+      // Linux
+      terminalCmd = `gnome-terminal -- bash -c "cd '${options.projectRoot}' && ${claudeCmd}; exec bash"`;
+    }
+
+    // Execute terminal command
+    exec(terminalCmd, (error) => {
+      if (error) {
+        console.error('Execute error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to open terminal. Make sure your terminal application is available.'
+        });
+      }
+
+      res.json({
+        status: 'started',
+        instruction,
+        message: 'Terminal started with Claude Code command'
+      });
+    });
   });
 
   // API: Serve graph data from user's project

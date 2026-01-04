@@ -16,7 +16,7 @@ export interface ActivityState {
   error: string | null;
 }
 
-const SSE_SERVER_URL = 'http://localhost:3001/events';
+const SSE_SERVER_URL = '/api/events';
 
 export function useActivityStream(enabled: boolean = true) {
   const [activeNodes, setActiveNodes] = useState<Set<string>>(new Set());
