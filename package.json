@@ -1,7 +1,7 @@
 {
   "name": "viewcc",
   "version": "1.0.2",
-  "description": "Interactive visualization for Claude Code projects - run with npx",
+  "description": "Interactive graph visualization for Claude Code projects - visualize agents, skills, and their relationships in a beautiful hierarchical layout",
   "main": "./lib/cli.js",
   "bin": {
     "viewcc": "./bin/claude-viz.js"
@@ -23,13 +23,22 @@
     "test": "npm run build && npm link"
   },
   "keywords": [
+    "claude",
     "claude-code",
     "visualization",
+    "visualizer",
     "graph",
+    "interactive",
     "agents",
     "skills",
+    "ai",
+    "ai-tools",
+    "developer-tools",
     "cli",
-    "developer-tools"
+    "npx",
+    "codebase",
+    "project-structure",
+    "dependency-graph"
   ],
   "author": "",
   "license": "MIT",

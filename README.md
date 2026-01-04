@@ -2,17 +2,23 @@
 
 > Interactive visualization tool for Claude Code agents and skills
 
+[![npm version](https://img.shields.io/npm/v/viewcc.svg)](https://www.npmjs.com/package/viewcc)
+[![npm downloads](https://img.shields.io/npm/dm/viewcc.svg)](https://www.npmjs.com/package/viewcc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Claude Code Visualizer** helps you understand and navigate your Claude Code project structure through an interactive graph visualization.
+📊 **Claude Code Visualizer** is a powerful tool that visualizes your entire Claude Code project structure in an interactive graph.
+Perfect for understanding agent-skill relationships, navigating complex projects, and executing agents/skills directly from the UI.
 
 ## ✨ Features
 
-- 📊 **Interactive Graph Visualization** - See all your agents and skills in a hierarchical layout
-- 🔄 **Real-time Connection Status** - Monitor SSE server connectivity
-- 🎯 **Execute from UI** - Run agents and skills directly from the graph
-- 🎨 **Clear Visual Hierarchy** - Distinguish between agents, skills, and their relationships
-- ⚡ **Fast Navigation** - Click nodes to see details, zoom and pan freely
+- 🎨 **Interactive Graph Visualization** - Beautiful hierarchical layout showing all agents and skills
+- 🔍 **Smart Relationship Mapping** - Automatically detects and visualizes agent-skill connections
+- ⚡ **One-Command Setup** - Just run `npx viewcc` - no installation needed
+- 🎯 **Execute from UI** - Run agents and skills directly from the graph interface
+- 🔄 **Real-time Monitoring** - Live connection status and activity tracking
+- 🎭 **Visual Clarity** - Color-coded nodes and Bezier curves for easy understanding
+- 🚀 **Zero Configuration** - Works out of the box with any Claude Code project
+- 📱 **Responsive Design** - Smooth zoom, pan, and navigation controls
 
 ## 🚀 Quick Start
 
@@ -52,15 +58,40 @@ That's it! The visualizer will:
 
 **Basic usage:**
 ```bash
+# Visualize current project
+npx viewcc
+
+# Visualize specific project
+cd /path/to/my-claude-project
 npx viewcc
 ```
 
-**Advanced options:**
+**CLI Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-p, --port <number>` | Server port | `3000` |
+| `--no-open` | Don't open browser automatically | `false` |
+| `--no-scan` | Skip scanning, use existing data | `false` |
+| `-v, --verbose` | Show detailed logs | `false` |
+
+**Examples:**
+
 ```bash
-npx viewcc --no-open       # Don't open browser
-npx viewcc --no-scan       # Use existing data
-npx viewcc --port 8080     # Custom port
-npx viewcc --verbose       # Show detailed logs
+# Use custom port
+npx viewcc --port 8080
+
+# Don't open browser (useful for remote servers)
+npx viewcc --no-open
+
+# Skip rescanning (faster startup)
+npx viewcc --no-scan
+
+# Debug mode with verbose logging
+npx viewcc --verbose
+
+# Combine options
+npx viewcc --port 5000 --no-open --verbose
 ```
 
 ### Local Development
