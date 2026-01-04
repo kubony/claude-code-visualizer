@@ -38,6 +38,25 @@ export async function run() {
   const cwd = process.cwd();
 
   try {
+    // 0. Check Node.js version
+    const nodeVersion = process.version;
+    const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
+    const REQUIRED_NODE_VERSION = 18;
+
+    if (majorVersion < REQUIRED_NODE_VERSION) {
+      console.error(chalk.red('✗ Node.js version too old'));
+      console.error(chalk.yellow(`  Current: ${nodeVersion}`));
+      console.error(chalk.yellow(`  Required: Node.js ${REQUIRED_NODE_VERSION}+`));
+      console.error('');
+      console.error(chalk.dim('  Download the latest version:'));
+      console.error(chalk.dim('  https://nodejs.org/'));
+      process.exit(1);
+    }
+
+    if (options.verbose) {
+      console.log(chalk.dim(`Node.js ${nodeVersion} ✓`));
+    }
+
     // 1. Validate Claude Code project
     if (options.verbose) {
       console.log(chalk.dim('Checking for .claude directory...'));

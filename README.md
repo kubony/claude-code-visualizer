@@ -18,8 +18,18 @@
 
 ### Prerequisites
 
-- [Claude Code](https://github.com/anthropics/claude-code) installed (optional)
-- Node.js 18+
+**Required:**
+- **Node.js 18+** - The visualizer runs on Node.js. [Download here](https://nodejs.org/)
+  - Includes `npx` (required to run the command)
+  - Check your version: `node --version`
+
+**Project Requirements:**
+- A **Claude Code project** with a `.claude/` directory
+  - If you don't have one, run `claude init` in your project folder
+  - Or use this tool to explore any existing Claude Code project
+
+**Optional:**
+- [Claude Code CLI](https://github.com/anthropics/claude-code) - For executing agents/skills from the UI
 
 ### Installation
 
