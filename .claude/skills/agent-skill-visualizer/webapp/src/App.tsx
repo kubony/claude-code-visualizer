@@ -259,6 +259,16 @@ function App() {
     e.preventDefault();
   }, [viewTransform]);
 
+  // Sanitize transform values to prevent NaN/Infinity
+  const sanitizeTransform = useCallback((transform: { scale: number; x: number; y: number }) => {
+    const isValid = (n: number) => Number.isFinite(n) && !Number.isNaN(n);
+    return {
+      scale: isValid(transform.scale) ? Math.min(Math.max(transform.scale, 0.3), 2) : 1,
+      x: isValid(transform.x) ? Math.min(Math.max(transform.x, -10000), 10000) : 0,
+      y: isValid(transform.y) ? Math.min(Math.max(transform.y, -10000), 10000) : 0,
+    };
+  }, []);
+
   // Handle mouse move
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (dragInfo.current) {
@@ -290,16 +300,6 @@ function App() {
   const handleMouseUp = useCallback(() => {
     dragInfo.current = null;
     panState.current = null;
-  }, []);
-
-  // Sanitize transform values to prevent NaN/Infinity
-  const sanitizeTransform = useCallback((transform: { scale: number; x: number; y: number }) => {
-    const isValid = (n: number) => Number.isFinite(n) && !Number.isNaN(n);
-    return {
-      scale: isValid(transform.scale) ? Math.min(Math.max(transform.scale, 0.3), 2) : 1,
-      x: isValid(transform.x) ? Math.min(Math.max(transform.x, -10000), 10000) : 0,
-      y: isValid(transform.y) ? Math.min(Math.max(transform.y, -10000), 10000) : 0,
-    };
   }, []);
 
   // Handle zoom
