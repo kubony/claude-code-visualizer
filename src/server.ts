@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Server } from 'http';
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 
 export interface ServerOptions {
   port: number;
@@ -37,45 +37,76 @@ export async function startServer(options: ServerOptions): Promise<Server> {
       return res.status(400).json({ error: 'instruction is required and must be a non-empty string' });
     }
 
-    // Build Claude Code command
-    const flag = skipPermissions ? '--dangerously-skip-permissions ' : '';
-    const escapedInstruction = instruction.replace(/'/g, "'\\''");
-    const claudeCmd = `claude ${flag}'${escapedInstruction}'`;
-
-    // Platform-specific terminal command
-    let terminalCmd: string;
     const platform = process.platform;
 
     if (platform === 'darwin') {
-      // macOS - AppleScript
-      const projectPath = options.projectRoot.replace(/'/g, "'\\''");
-      const escapedClaudeCmd = claudeCmd.replace(/'/g, "'\\''");
-      const applescript = `tell application "Terminal"\nactivate\ndo script "cd '${projectPath}' && ${escapedClaudeCmd}"\nend tell`;
-      terminalCmd = `osascript -e '${applescript.replace(/'/g, "'\\''")}'`;
+      // macOS - AppleScript using execFile to avoid shell escaping issues
+      const flag = skipPermissions ? '--dangerously-skip-permissions ' : '';
+
+      // Build the shell command that will run in Terminal
+      // Use JSON.stringify to properly escape for the shell
+      const shellCommand = `cd ${JSON.stringify(options.projectRoot)} && claude ${flag}${JSON.stringify(instruction)}`;
+
+      // Build AppleScript - use JSON.stringify again for AppleScript string escaping
+      const applescript = `tell application "Terminal"\nactivate\ndo script ${JSON.stringify(shellCommand)}\nend tell`;
+
+      // Use execFile with arguments array to avoid shell escaping
+      execFile('osascript', ['-e', applescript], (error) => {
+        if (error) {
+          console.error('Execute error:', error);
+          return res.status(500).json({
+            error: error.message,
+            message: 'Failed to open terminal. Make sure Terminal.app is available.'
+          });
+        }
+
+        res.json({
+          status: 'started',
+          instruction,
+          message: 'Terminal started with Claude Code command'
+        });
+      });
     } else if (platform === 'win32') {
       // Windows
-      terminalCmd = `start cmd /K "cd /d "${options.projectRoot}" && ${claudeCmd}"`;
+      const flag = skipPermissions ? '--dangerously-skip-permissions ' : '';
+      const terminalCmd = `start cmd /K "cd /d "${options.projectRoot}" && claude ${flag}"${instruction}""`;
+
+      exec(terminalCmd, (error) => {
+        if (error) {
+          console.error('Execute error:', error);
+          return res.status(500).json({
+            error: error.message,
+            message: 'Failed to open terminal.'
+          });
+        }
+
+        res.json({
+          status: 'started',
+          instruction,
+          message: 'Terminal started with Claude Code command'
+        });
+      });
     } else {
       // Linux
-      terminalCmd = `gnome-terminal -- bash -c "cd '${options.projectRoot}' && ${claudeCmd}; exec bash"`;
-    }
+      const flag = skipPermissions ? '--dangerously-skip-permissions ' : '';
+      const terminalCmd = `gnome-terminal -- bash -c "cd '${options.projectRoot}' && claude ${flag}'${instruction.replace(/'/g, "'\\''")}'; exec bash"`;
 
-    // Execute terminal command
-    exec(terminalCmd, (error) => {
-      if (error) {
-        console.error('Execute error:', error);
-        return res.status(500).json({
-          error: error.message,
-          message: 'Failed to open terminal. Make sure your terminal application is available.'
+      exec(terminalCmd, (error) => {
+        if (error) {
+          console.error('Execute error:', error);
+          return res.status(500).json({
+            error: error.message,
+            message: 'Failed to open terminal. Make sure gnome-terminal is available.'
+          });
+        }
+
+        res.json({
+          status: 'started',
+          instruction,
+          message: 'Terminal started with Claude Code command'
         });
-      }
-
-      res.json({
-        status: 'started',
-        instruction,
-        message: 'Terminal started with Claude Code command'
       });
-    });
+    }
   });
 
   // API: Serve graph data from user's project
