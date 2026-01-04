@@ -59,7 +59,7 @@ If you want to modify or contribute:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/claude-code-visualizer
+git clone https://github.com/kubony/claude-code-visualizer
 cd claude-code-visualizer
 
 # Install dependencies
@@ -152,8 +152,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-- GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
-- Issues: [GitHub Issues](https://github.com/YOUR_USERNAME/claude-code-visualizer/issues)
+- GitHub: [@kubony](https://github.com/kubony)
+- Issues: [GitHub Issues](https://github.com/kubony/claude-code-visualizer/issues)
 
 ---
 

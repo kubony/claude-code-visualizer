@@ -32,7 +32,7 @@ mkdir -p .claude/agents
 # Download and extract
 echo "📦 Downloading visualizer..."
 TEMP_DIR=$(mktemp -d)
-curl -sL https://github.com/YOUR_USERNAME/claude-code-visualizer/archive/main.tar.gz | \
+curl -sL https://github.com/kubony/claude-code-visualizer/archive/main.tar.gz | \
   tar xz --strip-components=1 -C "$TEMP_DIR"
 
 # Copy files
@@ -67,4 +67,4 @@ echo ""
 echo "   3. Open in browser:"
 echo "      http://localhost:5173"
 echo ""
-echo "📚 Documentation: https://github.com/YOUR_USERNAME/claude-code-visualizer"
+echo "📚 Documentation: https://github.com/kubony/claude-code-visualizer"
