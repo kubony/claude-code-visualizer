@@ -8,7 +8,7 @@ interface Point {
 interface BezierEdgeProps {
   start: Point;
   end: Point;
-  type: 'uses' | 'depends' | 'calls';
+  type: 'uses' | 'depends' | 'calls' | 'orchestrates';
   isHighlighted?: boolean;
   isDimmed?: boolean;
 }
@@ -36,11 +36,12 @@ export const BezierEdge: React.FC<BezierEdgeProps> = ({
 
   const getStrokeColor = () => {
     if (isDimmed) return '#374151'; // gray-700
-    // Color by type: uses=indigo, depends=gray, calls=purple
+    // Color by type: uses=indigo, depends=gray, calls=purple, orchestrates=emerald
     const colorMap = {
-      uses: '#6366f1',    // indigo
-      depends: '#6b7280', // gray-500 (skill dependencies)
-      calls: '#a855f7'    // purple (agent→agent)
+      uses: '#6366f1',       // indigo (agent→skill)
+      depends: '#6b7280',    // gray-500 (skill dependencies)
+      calls: '#a855f7',      // purple (agent→agent)
+      orchestrates: '#10b981' // emerald (skill→agent)
     };
     return colorMap[type] || '#6366f1';
   };
@@ -72,6 +73,7 @@ export const BezierEdge: React.FC<BezierEdgeProps> = ({
         strokeDasharray={
           type === 'depends' ? '8,4' :
           type === 'calls' ? '12,4,4,4' : // distinctive pattern for agent→agent
+          type === 'orchestrates' ? '6,3' : // short dash for skill→agent
           'none'
         }
       />

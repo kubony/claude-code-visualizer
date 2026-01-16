@@ -24,6 +24,7 @@ export interface SkillNode {
   hasScripts: boolean;
   hasWebapp: boolean;
   scope: NodeScope;
+  subagents?: string[];
 }
 
 export interface CommandNode {
@@ -41,7 +42,7 @@ export type GraphNode = AgentNode | SkillNode | CommandNode;
 export interface GraphEdge {
   source: string;
   target: string;
-  type: 'uses' | 'depends' | 'calls';
+  type: 'uses' | 'depends' | 'calls' | 'orchestrates';
 }
 
 export interface GraphMetadata {

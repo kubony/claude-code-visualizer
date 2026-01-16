@@ -168,6 +168,15 @@ def scan_skills(claude_path: Path) -> list[dict[str, Any]]:
                 trigger_lines = trigger_match.group(1).strip().split('\n')
                 triggers = [line.strip('- ').strip() for line in trigger_lines if line.strip().startswith('-')]
 
+            # Parse subagents - can be a list or comma-separated string
+            subagents_raw = metadata.get("subagents", [])
+            if isinstance(subagents_raw, str):
+                subagents = [s.strip() for s in subagents_raw.split(",") if s.strip()]
+            elif isinstance(subagents_raw, list):
+                subagents = subagents_raw
+            else:
+                subagents = []
+
             skill = {
                 "id": f"skill:{skill_dir.name}",
                 "type": "skill",
@@ -176,7 +185,8 @@ def scan_skills(claude_path: Path) -> list[dict[str, Any]]:
                 "triggers": triggers[:5],  # Limit to 5 triggers
                 "filePath": str(skill_file.relative_to(claude_path.parent)),
                 "hasScripts": (skill_dir / "scripts").exists(),
-                "hasWebapp": (skill_dir / "webapp").exists()
+                "hasWebapp": (skill_dir / "webapp").exists(),
+                "subagents": subagents
             }
             skills.append(skill)
         except Exception as e:
@@ -276,6 +286,13 @@ def find_relationships(agents: list[dict], skills: list[dict], claude_path: Path
                 # Check if agent references this skill
                 if skill_name in content or skill_id in content:
                     add_edge(agent["id"], skill["id"], "uses")
+
+    # Skill -> Agent relationships (from subagents field in skills)
+    for skill in skills:
+        for subagent_name in skill.get("subagents", []):
+            subagent_key = subagent_name.lower().strip()
+            if subagent_key in agent_map:
+                add_edge(skill["id"], agent_map[subagent_key], "orchestrates")
 
     return edges
 

@@ -60,13 +60,19 @@ export function Legend({ metadata }: LegendProps) {
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <div className="w-8 h-0.5 bg-indigo-500" />
-          <span className="text-xs text-gray-400">uses</span>
+          <span className="text-xs text-gray-400">uses (Agent→Skill)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-0.5" style={{
             backgroundImage: 'repeating-linear-gradient(90deg, #a855f7 0, #a855f7 6px, transparent 6px, transparent 8px, #a855f7 8px, #a855f7 10px, transparent 10px, transparent 12px)'
           }} />
-          <span className="text-xs text-gray-400">calls</span>
+          <span className="text-xs text-gray-400">calls (Agent→Agent)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-0.5" style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, #10b981 0, #10b981 4px, transparent 4px, transparent 6px)'
+          }} />
+          <span className="text-xs text-gray-400">orchestrates (Skill→Agent)</span>
         </div>
       </div>
 
