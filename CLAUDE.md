@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for Claude Code Visualizer
 
-> **Last Updated:** 2025-01-03
+> **Last Updated:** 2026-01-17
 > **Repository:** Claude Code Visualizer
 > **Purpose:** Interactive visualization tool for Claude Code projects
 
@@ -111,9 +111,36 @@ claude-code-visualizer/
 2. Scans `.claude/skills/*/SKILL.md` for skill definitions
 3. Parses YAML frontmatter for metadata
 4. Detects relationships:
-   - `calls`: Agent → Agent (from `subagents:` field)
-   - `uses`: Agent → Skill (from `skills:` field or content references)
+   - `calls`: Agent → Agent (from `subagents:` field in agent YAML)
+   - `uses`: Agent → Skill (from `skills:` field in agent YAML or content references)
+   - `orchestrates`: Skill → Agent (from `subagents:` field in skill YAML) **[v1.5.0]**
 5. Generates `graph-data.json` with nodes and edges
+
+**YAML Frontmatter Fields**:
+
+Agents (`agents/*.md`):
+```yaml
+---
+name: agent-name
+description: Brief description (single line)
+tools: [Read, Write, Bash]  # or comma-separated
+model: sonnet
+subagents:                   # agents this agent calls
+  - child-agent-1
+skills:                      # skills this agent uses
+  - skill-name-1
+---
+```
+
+Skills (`skills/*/SKILL.md`):
+```yaml
+---
+name: skill-name
+description: Brief description (single line)
+subagents:                   # agents this skill orchestrates [v1.5.0]
+  - agent-name-1
+---
+```
 
 **Important Notes**:
 - Default output: `.claude/skills/agent-skill-visualizer/webapp/public/data/graph-data.json`
@@ -163,8 +190,9 @@ python .claude/skills/agent-skill-visualizer/scripts/stream_server.py
   - Displays name, description, model, badges
 
 - **Edge Rendering** (`BezierEdge.tsx`):
-  - Purple dashed: Agent → Agent (calls)
   - Indigo solid: Agent → Skill (uses)
+  - Purple dashed: Agent → Agent (calls)
+  - Emerald short-dash: Skill → Agent (orchestrates) **[v1.5.0]**
   - Bezier curves for smooth connections
 
 - **Interaction**:
@@ -305,25 +333,34 @@ https://github.com/johndoe/claude-code-visualizer
 
 ### Task 5: Add new edge type
 
-**Steps**:
+**Example (v1.5.0 - orchestrates)**:
+
 1. **Update scanner** (`scan_agents_skills.py`):
    ```python
-   add_edge(source_id, target_id, "new-type")
+   # Skill → Agent relationships (from subagents field in skills)
+   for skill in skills:
+       for subagent_name in skill.get("subagents", []):
+           subagent_key = subagent_name.lower().strip()
+           if subagent_key in agent_map:
+               add_edge(skill["id"], agent_map[subagent_key], "orchestrates")
    ```
 
 2. **Update TypeScript types** (`webapp/src/types/graph.ts`):
    ```typescript
-   type: 'uses' | 'calls' | 'new-type';
+   type: 'uses' | 'calls' | 'orchestrates' | 'depends';
    ```
 
 3. **Add color mapping** (`webapp/src/components/BezierEdge.tsx`):
    ```typescript
    const colorMap = {
-     uses: '#6366f1',
-     calls: '#a855f7',
-     'new-type': '#f59e0b'
+     uses: '#6366f1',        // indigo (agent→skill)
+     calls: '#a855f7',       // purple (agent→agent)
+     orchestrates: '#10b981', // emerald (skill→agent)
+     depends: '#6b7280'      // gray
    };
    ```
+
+4. **Update Legend** (`webapp/src/components/Legend.tsx`)
 
 ### Task 6: Update install.sh URL
 
@@ -431,6 +468,8 @@ Example:
 
 5. **Hierarchical layout**: Parent agents (with children) at top, skill-only agents near skills, for clear visual hierarchy.
 
+6. **YAML frontmatter for relationships (v1.5.0)**: Added explicit `skills`/`subagents` fields to YAML frontmatter instead of relying solely on content-based detection. Provides more accurate relationship mapping and enables Skill→Agent orchestration.
+
 ### Known Limitations
 
 - **Real-time tracking**: Limited by Claude Code's current streaming capabilities
@@ -511,5 +550,5 @@ npm publish --access public
 ---
 
 **Last Updated**: 2026-01-17
-**Version**: 1.4.0
+**Version**: 1.5.0
 **Maintainer**: Claude Code community
