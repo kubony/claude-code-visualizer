@@ -1,6 +1,6 @@
 {
   "name": "agent-skill-visualizer",
-  "version": "1.0.0",
+  "version": "1.6.1",
   "description": "D3.js visualization for Claude Code agents and skills",
   "type": "module",
   "scripts": {
