@@ -403,6 +403,15 @@ function App() {
     };
   }, [data, searchTerm, selectedNode, showGlobalNodes]);
 
+  // Filter edges: only show edges where both nodes are visible
+  const visibleEdges = useMemo(() => {
+    if (!data) return [];
+    const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
+    return data.edges.filter(edge =>
+      visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target)
+    );
+  }, [data, visibleNodes]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -535,7 +544,7 @@ function App() {
               className="absolute inset-0 pointer-events-none z-10"
               style={{ width: '6000px', height: '4000px' }}
             >
-              {data.edges.map(edge => {
+              {visibleEdges.map(edge => {
                 const positions = getEdgePositions(edge);
                 if (!positions) return null;
 
