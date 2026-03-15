@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run build:webapp && npm run copy:dist",
-    "build:webapp": "cd .claude/skills/agent-skill-visualizer/webapp && npm run build",
+    "build:webapp": "cd .claude/skills/agent-skill-visualizer/webapp && npm install && npm run build",
     "copy:dist": "mkdir -p dist && cp -r .claude/skills/agent-skill-visualizer/webapp/dist/* dist/",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build",
