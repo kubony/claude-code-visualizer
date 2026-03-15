@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Server } from 'http';
+import { Socket } from 'net';
 import { exec, execFile } from 'child_process';
 
 export interface ServerOptions {
@@ -11,11 +12,18 @@ export interface ServerOptions {
   dataPath: string;
 }
 
+export interface ServerHandle {
+  server: Server;
+  forceShutdown: () => Promise<void>;
+}
+
 /**
  * Start the Express server for serving the visualizer webapp
  */
-export async function startServer(options: ServerOptions): Promise<Server> {
+export async function startServer(options: ServerOptions): Promise<ServerHandle> {
   const app = express();
+  const sseClients = new Set<Response>();
+  const activeConnections = new Set<Socket>();
 
   // Parse JSON request bodies
   app.use(express.json());
@@ -135,8 +143,7 @@ export async function startServer(options: ServerOptions): Promise<Server> {
     res.write('event: connected\n');
     res.write('data: {"status":"connected"}\n\n');
 
-    // Watch stream.jsonl if exists (optional enhancement)
-    const streamPath = path.join(options.projectRoot, '.claude/stream.jsonl');
+    sseClients.add(res);
 
     // Keep connection alive with periodic heartbeats
     const heartbeat = setInterval(() => {
@@ -146,6 +153,7 @@ export async function startServer(options: ServerOptions): Promise<Server> {
     // Cleanup on client disconnect
     req.on('close', () => {
       clearInterval(heartbeat);
+      sseClients.delete(res);
       res.end();
     });
   });
@@ -175,7 +183,32 @@ export async function startServer(options: ServerOptions): Promise<Server> {
   // Start server
   return new Promise((resolve, reject) => {
     const server = app.listen(options.port, () => {
-      resolve(server);
+      // Track all active connections for force-close
+      server.on('connection', (socket: Socket) => {
+        activeConnections.add(socket);
+        socket.on('close', () => activeConnections.delete(socket));
+      });
+
+      const forceShutdown = async (): Promise<void> => {
+        // 1. Send shutdown event to all SSE clients and close them
+        for (const client of sseClients) {
+          try {
+            client.write('event: shutdown\ndata: {"status":"shutdown"}\n\n');
+            client.end();
+          } catch {}
+        }
+        sseClients.clear();
+
+        // 2. Stop accepting new connections
+        await new Promise<void>((res) => server.close(() => res()));
+
+        // 3. Destroy any remaining open sockets
+        for (const socket of activeConnections) {
+          socket.destroy();
+        }
+      };
+
+      resolve({ server, forceShutdown });
     }).on('error', (err: Error) => {
       reject(new Error(`Failed to start server on port ${options.port}: ${err.message}`));
     });

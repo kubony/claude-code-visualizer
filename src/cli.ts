@@ -137,7 +137,7 @@ export async function run() {
     // Find dist directory (relative to this compiled file in lib/)
     const distDir = path.join(__dirname, '..', 'dist');
 
-    const server = await startServer({
+    const { forceShutdown } = await startServer({
       port,
       projectRoot: cwd,
       distDir,
@@ -173,15 +173,15 @@ export async function run() {
     console.log('');
 
     // 8. Graceful shutdown
+    let isShuttingDown = false;
     const shutdown = async () => {
+      if (isShuttingDown) return;
+      isShuttingDown = true;
+
       console.log('');
       console.log(chalk.blue('👋 Shutting down...'));
-      await new Promise<void>((resolve) => {
-        server.close(() => {
-          console.log(chalk.green('✓ Server stopped'));
-          resolve();
-        });
-      });
+      await forceShutdown();
+      console.log(chalk.green('✓ Server stopped'));
       process.exit(0);
     };
 

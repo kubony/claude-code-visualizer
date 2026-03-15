@@ -150,13 +150,13 @@ If you want to modify or contribute:
 git clone https://github.com/kubony/claude-code-visualizer
 cd claude-code-visualizer
 
-# Install dependencies
+# Install root dependencies
 npm install
 
-# Build the project
+# Build the project (TypeScript + webapp, webapp deps auto-installed)
 npm run build
 
-# Link locally
+# Link locally for testing
 npm link
 
 # Test in any Claude Code project
