@@ -1,4 +1,4 @@
-# CLAUDE.md - AI Assistant Guide for Claude Code Visualizer
+# AGENTS.md - AI Assistant Guide for Claude Code Visualizer
 
 > **Last Updated:** 2026-01-17
 > **Repository:** Claude Code Visualizer
